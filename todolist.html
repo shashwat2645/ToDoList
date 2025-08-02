@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+    <style>
+        *{
+            margin: 0;
+            box-sizing: border-box;
+            /* background: #000; */
+            font-family: 'Indie Flower', cursive;
+        }
+        html{
+            height: 100%;
+        }
+        body{
+            height: 100%;
+            background: linear-gradient(to bottom left, #35d1ec, #63dff8, #b3f0ff);
+        }
+        .container{
+            height: fit-content;
+            border-radius: 20px;
+            width: 70vw;
+            padding: 10px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow:  0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .nav{
+            text-align: center;
+        }
+        .user{
+            display: flex;
+            justify-content: space-evenly;
+        }
+        .content input{
+            border-radius: 20px;
+            width: 700px;
+            padding: 7px;
+            font-size: 25px;
+            border: #35d1ec;
+        }
+        /* input::placeholder{
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        } */
+        input:focus{
+            outline: none;
+        }
+        button{
+            font-size: 25px;
+            border-radius: 20px;
+            padding: 5px;
+        }
+        button:hover{
+            cursor: pointer;
+            background-color: #dde8eb;
+            transition: 1s ease-in-out;
+        }
+        .tasks{
+            margin-top: 30px;
+        }
+        ul li{
+            margin-top: 5px;
+            width: 700px;
+            list-style: none;
+            font-size: 25px;
+            padding: 6px;
+            border-radius: 20px;
+            background: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .strikethrough{
+            text-decoration: line-through;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <h1 style="font-size: 40px;">To Do List</h1>
+        </div>
+        <div class="content">
+            <div class="user">
+                <input type="text" id="task" placeholder="Enter your task...">
+                <button id="addTask" onclick="addTask()">Add Task</button>
+            </div>
+            <div class="tasks">
+                <ul id="taskList"></ul>
+            </div>
+        </div>
+    </div>
+    <script>
+    let tasks = [];
+
+    function renderTask(task) {
+        const li = document.createElement('li');
+        const span = document.createElement("span");
+        span.textContent = task;
+
+        const cross = document.createElement("i");
+        cross.className = "fa-solid fa-xmark";
+        cross.style.cursor = "pointer";
+        cross.style.marginRight = "20px";
+
+        cross.addEventListener("click", () => {
+            li.classList.add("strikethrough");
+            deleteTask(task);
+            tasks = tasks.filter(t => t !== task);
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+        });
+
+        li.appendChild(span);
+        li.appendChild(cross);
+        document.getElementById("taskList").appendChild(li);
+    }
+
+    function addTask() {
+        let input = document.getElementById("task");
+        let task = input.value.trim();
+
+        if (task !== "") {
+            if (tasks.includes(task)) {
+                alert("Task already exists! ✋");
+                return;
+            }
+
+            tasks.push(task);
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+            renderTask(task);
+            input.value = "";
+        }
+    }
+
+    function deleteTask(taskToDelete) {
+        tasks = tasks.filter(task => task !== taskToDelete);
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+
+    window.onload = function () {
+        tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+        tasks.forEach(task => renderTask(task));
+    };
+</script>
+
+</body>
+</html>
